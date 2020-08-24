@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠哥和小美</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: black;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .container {
+            /*指定观察者与平面的距离，使有透视效果*/
+            /*若无法正常3d效果，将perspective属性提到更上一个父容器即可(此处已上提，从items-->container)*/
+            perspective: 1000px;
+            /*让container的伪类有过渡效果--51-54行*/
+            /*transition: all 1s;*/
+        }
+
+        .items {
+            width: 10rem;
+            height: 10rem;
+            border: 1px solid #c18;
+            margin: 10rem auto;
+            /*指定子元素定位在三维空间内*/
+            transform-style: preserve-3d;
+            /*让所有item的父级元素（即items）旋转，item就是围绕着旋转了*/
+            animation: autoMove 10s infinite linear;
+        }
+
+        .item {
+            width: 200px;
+            height: 400px;
+            opacity: 1;
+            font-size: 200px;
+            box-shadow: 0 0 10px #FFFFFF;
+            /* box-reflect: below 8px linear-gradient(top, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .7) 100%); */
+            line-height: 200px;
+            -webkit-box-reflect: below 8px -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .7) 100%);
+            text-align: center;
+            position: absolute;
+        }
+
+        /*定义自动旋转的动画*/
+
+        @keyframes autoMove {
+            from {}
+
+            to {
+                transform: rotateY(-360deg);
+            }
+        }
+
+        .items:hover {
+            /*鼠标移入 暂停动画*/
+            animation-play-state: paused;
+        }
+
+        .container:hover {
+            /*鼠标移入，绕Z轴旋转90deg*/
+            /*transform: rotateZ(90deg);*/
+        }
+    </style>
+    <script src="./zb/jquery.min.js"></script>
+    <script>
+        $(function () {
+
+            var itemNum = $(".container .items .item").length; //要旋转的div的数量
+
+            var itemDeg = 360 / itemNum; //计算平均偏移角度，后面的itemDeg*index是不同索引div的偏移角度
+            $(".items>.item").each(function (index, element) {
+                $(element).css({
+                    //给每一个item设置好位置
+                    //rotateY让每一个item绕着Y轴偏移，itemDeg*index是不同索引div的偏移角度
+                    //translateZ是控制item在角度偏移后，往他们的正上方移动的距离，数值越大旋转的范围越大
+                    transform: "rotateY(" + itemDeg * index + "deg) translateZ(280px)"
+
+                });
+
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="items">
+
+            <!--简便起见，用背景色和数字代替图片-->
+
+            <img src="./zb/image/1.jpg" alt="" class="item">
+            <img src="./zb/image/2.jpg" alt="" class="item">
+            <img src="./zb/image/5.jpg" alt="" class="item">
+            <img src="./zb/image/6.jpg" alt="" class="item">
+            <img src="./zb/image/3.jpg" alt="" class="item">
+            <img src="./zb/image/7.jpg" alt="" class="item">
+            <img src="./zb/image/4.jpg" alt="" class="item">
+        </div>
+    </div>
+    <script>
+        function snow() {
+            //    1、定义一片雪花模板
+            var flake = document.createElement('div');
+            // 雪花字符 ❄❉❅❆✻✼❇❈❊✥✺
+            flake.innerHTML = '❤';
+            flake.style.cssText = 'position:absolute;color:#fff;';
+
+            //获取页面的高度 相当于雪花下落结束时Y轴的位置
+            var documentHieght = window.innerHeight;
+            //获取页面的宽度，利用这个数来算出，雪花开始时left的值
+            var documentWidth = window.innerWidth;
+
+            //定义生成一片雪花的毫秒数
+            var millisec = 50;
+            //2、设置第一个定时器，周期性定时器，每隔一段时间（millisec）生成一片雪花；
+            setInterval(function () { //页面加载之后，定时器就开始工作
+                //随机生成雪花下落 开始 时left的值，相当于开始时X轴的位置
+                var startLeft = Math.random() * documentWidth;
+
+                //随机生成雪花下落 结束 时left的值，相当于结束时X轴的位置
+                var endLeft = Math.random() * documentWidth;
+
+                //随机生成雪花大小
+                var flakeSize = 5 + 20 * Math.random();
+
+                //随机生成雪花下落持续时间
+                var durationTime = 4000 + 7000 * Math.random();
+
+                //随机生成雪花下落 开始 时的透明度
+                var startOpacity = 0.7 + 0.3 * Math.random();
+
+                //随机生成雪花下落 结束 时的透明度
+                var endOpacity = 0.2 + 0.2 * Math.random();
+
+                //克隆一个雪花模板
+                var cloneFlake = flake.cloneNode(true);
+
+                //第一次修改样式，定义克隆出来的雪花的样式
+                cloneFlake.style.cssText += `
+                        left: ${startLeft}px;
+                        opacity: ${startOpacity};
+                        font-size:${flakeSize}px;
+                        top:-25px;
+                              transition:${durationTime}ms;
+                      `;
+
+                //拼接到页面中
+                document.body.appendChild(cloneFlake);
+
+                //设置第二个定时器，一次性定时器，
+                //当第一个定时器生成雪花，并在页面上渲染出来后，修改雪花的样式，让雪花动起来；
+                setTimeout(function () {
+                    //第二次修改样式
+                    cloneFlake.style.cssText += `
+                                left: ${endLeft}px;
+                                top:${documentHieght}px;
+                                opacity:${endOpacity};
+                            `;
+
+                    //4、设置第三个定时器，当雪花落下后，删除雪花。
+                    setTimeout(function () {
+                        cloneFlake.remove();
+                    }, durationTime);
+                }, 0);
+
+            }, millisec);
+        }
+        snow();
+    </script>
+
+
+</body>
+
+
+</html>
